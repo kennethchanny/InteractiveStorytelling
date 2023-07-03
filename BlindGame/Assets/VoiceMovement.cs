@@ -10,17 +10,41 @@ public class VoiceMovement : MonoBehaviour
     private bool isWaiting;             // Flag to indicate if waiting for the player
     private Vector3 currentVelocity; //current speed
     public float smoothTime = 5f;      // Smoothing time for SmoothDamp
+    private AudioSource audioRef;
+
+
+    public float maxVolume = 1f;
+    public float minVolume = 0.1f;
 
     public GameObject playerRef;
+    public Transform playerCameraRef;
+
 
     private void Start()
     {
         currentWaypointIndex = 0;
         isWaiting = true;
         currentVelocity = Vector3.zero;
+        audioRef = GetComponent<AudioSource>();
     }
 
-    private void Update()
+
+    private void DistancetoVolume()
+    {
+        Vector3 toPlayer = playerCameraRef.transform.position - transform.position;
+        toPlayer.Normalize();
+
+        float dotProduct = Vector3.Dot(playerCameraRef.forward, toPlayer);
+
+        // Calculate the volume based on the dot product
+        float volume = Mathf.Lerp(minVolume, maxVolume, -dotProduct);
+
+        audioRef.volume = volume;
+
+
+    }
+
+    private void Movement()
     {
         if (isWaiting)
         {
@@ -50,5 +74,11 @@ public class VoiceMovement : MonoBehaviour
                 }
             }
         }
+    }
+
+    private void Update()
+    {
+        DistancetoVolume();
+        Movement();
     }
 }
