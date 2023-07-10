@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections;
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
 using UnityEngine.InputSystem;
 #endif
@@ -64,6 +65,9 @@ namespace StarterAssets
 		private float _jumpTimeoutDelta;
 		private float _fallTimeoutDelta;
 
+		private AudioScript audioScriptRef;
+		private bool isWalking = false;
+
 	
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
 		private PlayerInput _playerInput;
@@ -97,6 +101,7 @@ namespace StarterAssets
 
 		private void Start()
 		{
+			audioScriptRef = GetComponent<AudioScript>();
 			_controller = GetComponent<CharacterController>();
 			_input = GetComponent<StarterAssetsInputs>();
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
@@ -192,11 +197,33 @@ namespace StarterAssets
 			{
 				// move
 				inputDirection = transform.right * _input.move.x + transform.forward * _input.move.y;
+				StartCoroutine(WalkCoroutine());
 			}
 
 			// move the player
 			_controller.Move(inputDirection.normalized * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
 		}
+
+		private void WalkSound()
+        {
+			audioScriptRef.playAudio();
+        }
+
+		IEnumerator WalkCoroutine()
+		{
+			if(isWalking == false)
+            {
+				// Call the function here
+				WalkSound();
+				isWalking = true;
+				yield return new WaitForSeconds(0.5f);
+				isWalking = false;
+
+			}
+				
+
+		}
+
 
 		private void JumpAndGravity()
 		{

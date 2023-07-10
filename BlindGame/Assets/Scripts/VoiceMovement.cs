@@ -52,6 +52,7 @@ public class VoiceMovement : MonoBehaviour
             if (Vector3.Distance(transform.position, playerRef.transform.position) < distanceThreshold)
             {
                 isWaiting = false;  // Player is in range, stop waiting
+                EventManager.current.ObstacleTriggered();
             }
         }
         else

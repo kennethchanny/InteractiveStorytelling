@@ -16,17 +16,21 @@ public class AudioFade : MonoBehaviour
     private float buffer = 2.5f;
     private bool isPlaying = false;
 
+    public bool playOnStart = false;
+
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
-        if (!isPlaying)
-        {
-            fadeInSnapshot.TransitionTo(fadeDuration);
-            isPlaying = true;   
-        }
-        
         if (audioClip == null)
             audioClip = GetComponent<AudioSource>().clip;
+
+
+        if (playOnStart)
+        {
+            FadeIn();
+        }
+        
+     
     }
 
     private void Update()
@@ -41,9 +45,15 @@ public class AudioFade : MonoBehaviour
         }   
     }
 
-    private void FadeOut()
+    public void FadeOut()
     {
         fadeOutSnapshot.TransitionTo(fadeDuration);
         isPlaying= false;
+    }
+
+    public void FadeIn()
+    {
+        fadeInSnapshot.TransitionTo(fadeDuration);
+        isPlaying = true;
     }
 }
